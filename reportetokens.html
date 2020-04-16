@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="bootstrap.min.css">
+        <script type="text/javascript" src="Scanner.js"></script>
+        <title>Reporte</title>
+
+        <script language="javascript">
+            function Crear_Tabla()
+            { 
+            console.log("este es el reporte");
+   
+
+             document.getElementById('tablePrint').innerHTML = localStorage.getItem('table');
+             }
+         </script>
+ 
+    </head>
+    
+
+    <style>
+        textarea {
+    overflow-y: scroll;
+    height: 20px;
+    resize: none;
+    width: 100px;
+     /* Remove this if you want the user to resize the textarea */
+     }
+    </style>
+    <body>
+        <h1>Reporte Errores</h1>
+        <button type="button" onclick="Crear_Tabla()" class="btn btn-success">Mostrar</button>
+        <div id="tablePrint"> </div>       
+         
+    </body>
+</html>
