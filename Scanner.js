@@ -1,4 +1,3 @@
-
 var Tipo = {
     Reservada_Int:1,
     Reservada_Double:2,
@@ -262,6 +261,7 @@ var contCol = 0;
 var contId = 1;
 var auxCol = 0;
 var contEr = 0;
+var pasada=0;
 var errorId = true;
 var i;
 var f; 
@@ -279,7 +279,7 @@ function scanneardos(entrada){
     estado=0;
     id = 1;
     linea=1;
-    contEr = 1;
+    contEr = 0;
     contCol = 0;
     contId = 1;
     auxCol = 0;
@@ -495,7 +495,7 @@ function scanneardos(entrada){
              
               break;
             case 1:
-                    if (isLetter(f) || isDigit(f))
+                    if (isLetter(f) || isDigit(f) || f == "_")
 
                         {
 
@@ -512,9 +512,9 @@ function scanneardos(entrada){
 
 
                             auxDatos = auxLex;
-                            if (auxLex == "int" || auxLex == "double" || auxLex == "char" || auxLex == "string"
+                            if (auxLex == "int" || auxLex == "double" || auxLex == "char" || auxLex == "string" || auxLex == "String"
                                 || auxLex == "bool" || auxLex == "class" || auxLex == "static" || auxLex == "void"
-                                || auxLex == "Main" || auxLex == "return" || auxLex == "Console" || auxLex == "WriteLine"
+                                || auxLex == "return" || auxLex == "Console" || auxLex == "Write"
                                 || auxLex == "if" || auxLex == "else" || auxLex == "switch" || auxLex == "case"
                                 || auxLex == "break" || auxLex == "default" || auxLex == "case" || auxLex == "for"
                                 || auxLex == "while" || auxLex == "new" || auxLex == "continue" || auxLex == "do" 
@@ -554,7 +554,7 @@ function scanneardos(entrada){
                                     contId = contId + 1;
                                     i = i - 1;
                                 }
-                                if (auxLex == "string")
+                                if (auxLex == "string" || auxLex == "String")
                                 {
                                     agregarToken( Tipo.Reservada_String, contId, 4, linea);
                                     contId = contId + 1;
@@ -590,12 +590,7 @@ function scanneardos(entrada){
                                     contId = contId + 1;
                                     i = i - 1;
                                 }
-                                if (auxLex == "Main")
-                                {
-                                    agregarToken(Tipo.Reservada_Main, contId, 9, linea);
-                                    contId = contId + 1;
-                                    i = i - 1;
-                                }
+                         
                                 if (auxLex == "return")
                                 {
                                     agregarToken(Tipo.Reservada_Return, contId, 10, linea);
@@ -608,7 +603,7 @@ function scanneardos(entrada){
                                     contId = contId + 1;
                                     i = i - 1;
                                 }
-                                if (auxLex == "WriteLine")
+                                if (auxLex == "Write")
                                 {
                                     agregarToken(Tipo.Reservada_WriteLine, contId, 12, linea);
                                     contId = contId + 1;
@@ -874,6 +869,11 @@ function scanneardos(entrada){
 
                     if (f=="\n")
                     {
+                        if (f == "\n")
+                        {
+
+                            linea = linea + 1;
+                        }
 
                         auxDatos = auxLex;
                         agregarToken(Tipo.Comentarios, contId, 0, linea);
@@ -890,15 +890,21 @@ function scanneardos(entrada){
                     break;
 
                 case 12:
-
-                    if (f=="*")
+                 
+                   
+                    if (f=="*" && entrada.charAt(i+1) == "/")
                     {
                         estado = 13; 
                     }
                     else
                     {
+                        if (f == "\n")
+                        {
 
+                            linea = linea + 1;
+                        }
                         auxLex += f;
+                        pasada = pasada+1;
 
                     }
 
@@ -994,6 +1000,7 @@ function scanneardos(entrada){
 
                     if (f=="|")
                     {
+                        auxLex += f;
                         auxDatos = auxLex;
                         agregarToken(Tipo.Comparador_Or, contId, 0, linea);
                         contId = contId + 1;
@@ -1017,7 +1024,21 @@ function scanneardos(entrada){
 }
 
 
-
+function scannearHTMLP(entrada){
+    entrada = entrada + "#";
+    auxLex="";
+    f="";
+    estado=0;
+    id = 1;
+    linea=1;
+    contEr = 1;
+    contCol = 0;
+    contId = 1;
+    auxCol = 0;
+    
+  
+    console.log(entrada);
+}
 
 
 function scannearHTML(entrada){
@@ -1044,7 +1065,7 @@ function scannearHTML(entrada){
                 auxLex += f;             
                 estado = 3;  
                 //agregarTokenH(tipo.SignoAbre);
-              
+                 
               }
               else if(f == ">")
               {
@@ -1104,112 +1125,116 @@ function scannearHTML(entrada){
                 {
                     console.log("El analisis ha termiando");
 
+                }else{
+                    //auxLex += f;
+                    estado = 1;
+                    i = i -1;
+                   // agregarTokenH(TipoH.texto, contId, 21, linea);
+                          ///         contId = contId + 1;
+                                
                 }
                
               }
              
               break;
             case 1:
-                if (isLetter(f) || isDigit(f))
+            
+                if (f == "<" || f == ">"){
+                   
+                    if (auxLex == "html")
+                    {
+                        agregarTokenH(TipoH.Etiqueta_Html);
+                        contId = contId + 1;
+                        
+                        i = i - 1; 
+                    }
+                    else if (auxLex == "head")
+                    {
+                        agregarTokenH(TipoH.Etiqueta_Head);
+                        contId = contId + 1;
+                        i = i - 1; 
+                    }
+                    else if (auxLex == "body")
+                    {
+                        agregarTokenH(TipoH.Etiqueta_Body);
+                        contId = contId + 1;
+                        i = i - 1; 
+                    } 
+                    else if (auxLex == "title")
+                    {
+                        agregarTokenH(TipoH.Etiqueta_Title);
+                        contId = contId + 1;
+                        i = i - 1; 
+                    }
+                    else if (auxLex == "div")
+                    {
+                        agregarTokenH(TipoH.Etiqueta_Div);
+                        contId = contId + 1;
+                        i = i - 1; 
+                    }
+                   
+                    else if (auxLex == "br")
+                    {
+                        agregarTokenH(TipoH.Etiqueta_Br);
+                        contId = contId + 1;
+                        i = i - 1; 
+                    }
+                    else if (auxLex == "p")
+                    {
+                        agregarTokenH(TipoH.Etiqueta_P);
+                        contId = contId + 1;
+                        i = i - 1; 
+                    }
+                    else if (auxLex == "h1" || auxLex == "h2" || auxLex == "h3" || auxLex == "h4")
+                    {
+                        agregarTokenH(TipoH.Etiqueta_H1);
+                        contId = contId + 1;
+                        i = i - 1; 
+                    }
+                    else if (auxLex == "button")
+                    {
+                        agregarTokenH(TipoH.Etiqueta_Button);
+                        contId = contId + 1;
+                        i = i - 1; 
+                    }
+                    else if (auxLex == "label")
+                    {
+                        agregarTokenH(TipoH.Etiqueta_Label);
+                        contId = contId + 1;
+                        i = i - 1; 
+                    }
+                    else if (auxLex == "input")
+                    {
+                        agregarTokenH(TipoH.Etiqueta_Input);
+                        contId = contId + 1;
+                        i = i - 1; 
+                        
+                    }else if (auxLex == "style"){
+                        agregarTokenH(TipoH.Style);
+                        i = i - 1; 
+                    }
 
+                                                   
+                else
                 {
+                    agregarTokenH(TipoH.texto, contId, 21, linea);
+                    contId = contId + 1;
+                    i = i - 1; 
+                }
 
+
+                }else{
                     if (f == "\n")
                     {
 
                         linea = linea + 1;
                     }
+                    
                     auxLex += f;
-
+                  
                 }
-                        else
-                        {
-                            //auxLex += f;
 
-                            auxDatos = auxLex;
-                           
-                                if (auxLex == "html")
-                                {
-                                    agregarTokenH(TipoH.Etiqueta_Html);
-                                    contId = contId + 1;
-                                    
-                                    i = i - 1; 
-                                }
-                                else if (auxLex == "head")
-                                {
-                                    agregarTokenH(TipoH.Etiqueta_Head);
-                                    contId = contId + 1;
-                                    i = i - 1; 
-                                }
-                                else if (auxLex == "body")
-                                {
-                                    agregarTokenH(TipoH.Etiqueta_Body);
-                                    contId = contId + 1;
-                                    i = i - 1; 
-                                } 
-                                else if (auxLex == "title")
-                                {
-                                    agregarTokenH(TipoH.Etiqueta_Title);
-                                    contId = contId + 1;
-                                    i = i - 1; 
-                                }
-                                else if (auxLex == "div")
-                                {
-                                    agregarTokenH(TipoH.Etiqueta_Div);
-                                    contId = contId + 1;
-                                    i = i - 1; 
-                                }
-                               
-                                else if (auxLex == "br")
-                                {
-                                    agregarTokenH(TipoH.Etiqueta_Br);
-                                    contId = contId + 1;
-                                    i = i - 1; 
-                                }
-                                else if (auxLex == "p")
-                                {
-                                    agregarTokenH(TipoH.Etiqueta_P);
-                                    contId = contId + 1;
-                                    i = i - 1; 
-                                }
-                                else if (auxLex == "h1" || auxLex == "h2" || auxLex == "h3" || auxLex == "h4")
-                                {
-                                    agregarTokenH(TipoH.Etiqueta_H1);
-                                    contId = contId + 1;
-                                    i = i - 1; 
-                                }
-                                else if (auxLex == "button")
-                                {
-                                    agregarTokenH(TipoH.Etiqueta_Button);
-                                    contId = contId + 1;
-                                    i = i - 1; 
-                                }
-                                else if (auxLex == "label")
-                                {
-                                    agregarTokenH(TipoH.Etiqueta_Label);
-                                    contId = contId + 1;
-                                    i = i - 1; 
-                                }
-                                else if (auxLex == "input")
-                                {
-                                    agregarTokenH(TipoH.Etiqueta_Input);
-                                    contId = contId + 1;
-                                    i = i - 1; 
-                                    
-                                }else if (auxLex == "style"){
-                                    agregarTokenH(TipoH.Style);
-                                    i = i - 1; 
-                                }
-
-                                                               
-                            else
-                            {
-                                agregarTokenH(TipoH.texto, contId, 21, linea);
-                                contId = contId + 1;
-                                i = i - 1; 
-                            }
-
-                        }
+               
                 
               break;
               case 2:
@@ -1305,10 +1330,11 @@ function llenarTABLA(){
 
 
 function CodigosHtml(){
-    for(i=0;i<Codigos.length;i++){
+    for(var i=0;i<Codigos.length;i++){
         console.log(Codigos[i].Codigo);
-        
-        scannearHTML(Codigos[i].Codigo);
+        SalidaH = [];
+        scannearHTML(Codigos[i].Codigo);        
+        parsearHtml();
       }
 }
 
@@ -1365,9 +1391,13 @@ function insertarTabla(tipodelDato,nuevoIden,nuevaFila){
 function prueba(){
     Salida = [];
     Errores = [];
+    SalidaH = [];
+    document.getElementById("traduccionH").value = "";
+    document.getElementById("traduccionJ").value = "";
     var p1 = document.getElementById("entrada").value;
     alert(p1);
     scanneardos(p1);
+    sumador = contEr+1;
     mostrarTokens();
     //imprimirdesde();
     parsear();
@@ -1379,7 +1409,6 @@ function prueba(){
     tablaVariables();
     CodigosHtml();
     mostrarTokensH();
-    parsearHtml();
     document.getElementById("traduccionH").value = myHtml;
     document.getElementById("traduccionJ").value = myJson
     ;
@@ -1450,7 +1479,7 @@ function mostrarMensaje1(){
    function agregarTokenH(tipo){
    
 
-     console.log(tipo);
+    console.log(tipo);
     SalidaH.push(new TokenH(tipo,auxLex));
 
     auxLex = "";
@@ -1585,9 +1614,27 @@ function isLetter(str) {
    var identifi;
    var filas;
    var existeHtml = false;
+   var sumador;
+  
 
 function parsear()
    {
+    tokenActual=Token;
+    cadena = "";
+    myHtml = "";
+    myJson = "";
+    controlToken;
+    errorSintactico = false;  
+    funContinue = false; 
+    funBreak = false;
+    funReturn = false;
+    funReturnF = false;
+    tab = "";
+    tipoDatos = "";
+    identifi;
+    filas;
+    existeHtml = false;
+    
        Salida.push(new Token(Tipo.ULTIMO,"0","0","0","0","0"));
     
        controlToken = 0;
@@ -1597,17 +1644,46 @@ function parsear()
        Start();
    }
 
+   
    function Start()
    {
-
+       comentarioss();
        emparejar(Tipo.Reservada_Class);
        emparejar(Tipo.Identificador);
        emparejar(Tipo.Signo_Corchete_izq);
        body();
        emparejar(Tipo.Signo_Corchete_der);
+       comentarioss();
+      
 
   
    }
+
+
+   function comentarioss(){
+    if (tokenActual.TIPO == Tipo.Signo_ComentarioParrafo)
+    {
+        cadena += "\"'" + tokenActual.Valor + "\"'";
+        cadena += "\r\n"; 
+        //cadena += "#" + tokenActual.Valor;
+        controlToken += 1;
+        tokenActual = Salida[controlToken];
+        comentarioss();
+    }
+    else if (tokenActual.TIPO == Tipo.Comentarios)
+    {
+        cadena += "#" + tokenActual.Valor;
+        cadena += "\r\n"; 
+        controlToken += 1;
+        tokenActual = Salida[controlToken];
+         comentarioss();
+    }else{
+
+
+    }  
+   }
+
+
   
    function body()
    {
@@ -1652,7 +1728,9 @@ function parsear()
     }
     else if (tokenActual.TIPO == Tipo.Signo_ComentarioParrafo)
     {
-        
+        cadena += "\"'" + tokenActual.Valor + "\"'";
+        cadena += "\r\n"; 
+        //cadena += "#" + tokenActual.Valor;
         controlToken += 1;
         tokenActual = Salida[controlToken];
         bodyP();
@@ -1660,6 +1738,7 @@ function parsear()
     else if (tokenActual.TIPO == Tipo.Comentarios)
     {
         cadena += "#" + tokenActual.Valor;
+        cadena += "\r\n"; 
         controlToken += 1;
         tokenActual = Salida[controlToken];
         bodyP();
@@ -1722,6 +1801,9 @@ function parsear()
     }
     else if (tokenActual.TIPO == Tipo.Signo_ComentarioParrafo)
     {
+        cadena += "\"'" + tokenActual.Valor + "\"'";
+        cadena += "\r\n"; 
+        //cadena += "#" + tokenActual.Valor;
         controlToken += 1;
         tokenActual = Salida[controlToken];
         bodyP();
@@ -1729,17 +1811,59 @@ function parsear()
     else if (tokenActual.TIPO == Tipo.Comentarios)
     {
         cadena += "#" + tokenActual.Valor;
+        cadena += "\r\n"; 
         controlToken += 1;
         tokenActual = Salida[controlToken];
         bodyP();
-    }else if(funContinue == true || funBreak == true){
+    }
+    else if(funContinue == true &&  tokenActual.TIPO == Tipo.Reservada_Continue){
         Continue();
+       
+        bodyP();
+    }
+    else if( funBreak == true &&  tokenActual.TIPO == Tipo.Reservada_Break){
+       
         Break();
-    }else if(funReturn == true){
+        bodyP();
+    }
+    else if(funReturn == true  && tokenActual.TIPO == Tipo.Reservada_Return){
          ReturnM();
-    }else if(funReturnF == true){
+         bodyP();
+    }else if(funReturnF == true && tokenActual.TIPO == Tipo.Reservada_Return){
         ReturnF();
-   }        
+        bodyP();
+   }
+   else if(funContinue == false &&  tokenActual.TIPO == Tipo.Reservada_Continue &&  switchC == false){
+    Errores.push(new Error(tokenActual.Numero,"Error sintactico",tokenActual.Fila, tokenActual.Columna, "continue no deberia de ir aca"));              
+    errorSintactico = true;
+    controlToken++;
+    tokenActual = Salida[controlToken];
+    errorExp = false;
+    bodyP();
+}
+else if(funContinue == false &&  tokenActual.TIPO == Tipo.Reservada_Break && switchC == false){
+    Errores.push(new Error(tokenActual.Numero,"Error sintactico",tokenActual.Fila, tokenActual.Columna, "break no deberia de ir aca"));              
+                errorSintactico = true;
+                controlToken++;
+                tokenActual = Salida[controlToken];
+                errorExp = false;
+    bodyP();
+}
+else if(funReturn == false  && tokenActual.TIPO == Tipo.Reservada_Return && switchC == false){
+    Errores.push(new Error(tokenActual.Numero,"Error sintactico",tokenActual.Fila, tokenActual.Columna, "return no deberia de ir aca"));              
+    errorSintactico = true;
+    controlToken++;
+    tokenActual = Salida[controlToken];
+    errorExp = false;
+     bodyP();
+}else if(funReturnF == false && tokenActual.TIPO == Tipo.Reservada_Return && switchC == false){
+    Errores.push(new Error(tokenActual.Numero,"Error sintactico",tokenActual.Fila, tokenActual.Columna, "return no deberia de ir aca"));              
+    errorSintactico = true;
+    controlToken++;
+    tokenActual = Salida[controlToken];
+    errorExp = false;
+    bodyP();
+}          
 
         else  {
          
@@ -1757,18 +1881,18 @@ function parsear()
    function declaracion()
    {
        TipoDato();
-       if (tokenActual.TIPO == Tipo.Signo_Llave_izq) {
-           Vector(); 
-       }
-       else if (tokenActual.TIPO == Tipo.Identificador)
-       {
-           
-           cadena += tab +"var "+ tokenActual.Valor;
+       
+       
+           if(Salida[controlToken+1].TIPO==Tipo.Signo_Parentesis_izq){
+            cadena += tab +"def "+ tokenActual.Valor;
+           }
+        else {cadena += tab +"var "+ tokenActual.Valor;}
            identifi = tokenActual.Valor;
            filas = tokenActual.Fila;
            emparejar(Tipo.Identificador);
            if(tokenActual.TIPO == Tipo.Signo_Parentesis_izq){
-                   Funcion();
+                   
+                  Funcion();
                    
                 }else{
           // Variables.push(new Variable(tipoDatos,identifi,filas))
@@ -1777,7 +1901,7 @@ function parsear()
            cadena += "\r\n"; 
            bodyP();
         }
-       }
+       
 
    }
 
@@ -1816,17 +1940,30 @@ function parsear()
    }
 
     function Asignacion() {
+        if(Salida[controlToken+1].TIPO == Tipo.Signo_Parentesis_izq){
+            cadena += tab+tokenActual.Valor;
+            emparejar(Tipo.Identificador);
+           Expres();
+           cadena += "\r\n"; 
+           emparejar(Tipo.Punto_Coma);
+           
+           bodyP();
+        }else{
         tipoDatos = "desconocido";
         identifi = tokenActual.Valor;
         filas = tokenActual.Fila;
-    emparejar(Tipo.Identificador);
+        cadena += tab+tokenActual.Valor;
+        emparejar(Tipo.Identificador);
     
     insertarTabla(tipoDatos,identifi,filas)
     AsignacionP();
     emparejar(Tipo.Punto_Coma);
+    cadena += "\r\n"; 
     bodyP();
 }
+}
 
+var errorExp=false;
  function AsignacionP()
 {
     if (tokenActual.TIPO == Tipo.Operador_Igual || tokenActual.TIPO == Tipo.Coma)
@@ -1835,7 +1972,14 @@ function parsear()
         {
             insertarTabla(tipoDatos,identifi,filas)
             cadena += tokenActual.Valor;
+            
             emparejar(Tipo.Operador_Igual);
+            if(tokenActual.TIPO == Tipo.Punto_Coma){
+                Errores.push(new Error(tokenActual.Numero,"Error sintactico",tokenActual.Fila, tokenActual.Columna, "Error se esperaba una expresion"));              
+                errorSintactico = true;
+                tokenActual = Salida[controlToken];
+                errorExp = false;
+                }
             Expres();
            
         }
@@ -1854,7 +1998,8 @@ function parsear()
         }
     }else
     {
-        insertarTabla(tipoDatos,identifi,filas)
+        //emparejar(Tipo.Identificador);
+        //insertarTabla(tipoDatos,identifi,filas)
     }
 }
 
@@ -1880,8 +2025,13 @@ function Instruccion()
 
 function Imprimir()
 {
+    if(tokenActual.TIPO == Tipo.Cadena_char){
+        cadena +=  tokenActual.Valor;
+        Codigos.push(new Html(tokenActual.Valor));
+        emparejar(Tipo.Cadena_char);
+    }else{
     Expres();
-   
+    }
      
 }
 
@@ -1890,8 +2040,12 @@ function Imprimir()
 function C_if()
 {
    
-    
+    if(elseIF ==true){
+        cadena += tokenActual.Valor + " ";
+        elseIF = false;
+    }else{
     cadena += tab + tokenActual.Valor + " ";
+    }
     emparejar(Tipo.Reservada_If);
     emparejar(Tipo.Signo_Parentesis_izq);
     Expres(); 
@@ -1908,21 +2062,32 @@ function C_if()
 
 
 }
+var elseIF = false;
 
 function Else()
 {
 
     if (tokenActual.TIPO == Tipo.Reservada_Else) {
        
-        cadena += tab + tokenActual.Valor + ":";
-        cadena += "\r\n";
+        //cadena += tab + tokenActual.Valor + ":";
+        //cadena += "\r\n";
+        
         emparejar(Tipo.Reservada_Else);
+        if(tokenActual.TIPO == Tipo.Reservada_If){
+            elseIF=true;
+            cadena += tab +"else ";
+            
+            C_if();
+        }else{
+        cadena += tab + "else" + ":";
+        cadena += "\r\n";
         emparejar(Tipo.Signo_Corchete_izq);
         AumentarTab();
         bodyP();
         DisminuirTab();
         
         emparejar(Tipo.Signo_Corchete_der);
+    }
     }
     else
     {
@@ -1999,21 +2164,30 @@ function C_for() {
     TipoDato();
     emparejar(Tipo.Identificador);
     emparejar(Tipo.Operador_Igual);
-    valor_for();
+    cadena += tab+"for in a range("
+    Expres();
+    cadena += ","
     emparejar(Tipo.Punto_Coma);
     emparejar(Tipo.Identificador);
     Operador_for();
-    E();
+    Expres();
+
     emparejar(Tipo.Punto_Coma);
     emparejar(Tipo.Identificador);
     Instru();
     emparejar(Tipo.Signo_Parentesis_der);
     emparejar(Tipo.Signo_Corchete_izq);
-    cadena += tab+"for in a range(" +num1+","+num2+"):";
+    if (decremento == true){
+        cadena += ",-1):";
+    }else{
+    cadena += "):";
+     }
     cadena += "\r\n";
+    AumentarTab();
     bodyP();
+    DisminuirTab();
     emparejar(Tipo.Signo_Corchete_der);
-    bodyP();
+    
     
     funBreak= false;
     funContinue= false;
@@ -2081,7 +2255,7 @@ function valor_for()
     }
 
 }
-
+var decremento =false;
 function Instru() {
 
         if (tokenActual.TIPO == Tipo.Operador_Aumento)
@@ -2090,7 +2264,9 @@ function Instru() {
         }
         else if (tokenActual.TIPO == Tipo.Operador_MenosMenos)
         {
+            
             emparejar(Tipo.Operador_MenosMenos);
+            decremento = true;
         }
     
     else
@@ -2102,27 +2278,51 @@ function Instru() {
 }
 
 //Fin sentencias de repeticion
-
+var switchC = false;
 function Swiitch() {
+    switchC= true;
+    cadena += tab+"def switch(case,";
     emparejar(Tipo.Reservada_Switch);
     emparejar(Tipo.Signo_Parentesis_izq);
-    emparejar(Tipo.Identificador);
+    Expres();
+    cadena += "):";
+    cadena += "\r\n";
+    AumentarTab();
+   
+  
+    cadena += tab+"switcher = {";
+    cadena += "\r\n";
+    
     emparejar(Tipo.Signo_Parentesis_der);
     emparejar(Tipo.Signo_Corchete_izq);
+    AumentarTab();
     Case();
+    
     Default();
+    DisminuirTab();
+    cadena += tab+"}";
     emparejar(Tipo.Signo_Corchete_der);
+    DisminuirTab();
+    switchC = false;
     bodyP();
 }
+
+
 
 function Case() {
     if(tokenActual.TIPO == Tipo.Reservada_Case) { 
     emparejar(Tipo.Reservada_Case);
-    emparejar(Tipo.Numero);
+    cadena += tab;
+   
+    Expres()
+    cadena += ":";
+     cadena += "\r\n";
     emparejar(Tipo.Dos_Puntos);
+    AumentarTab();
     bodyP();
-    emparejar(Tipo.Reservada_Break);
-    emparejar(Tipo.Punto_Coma);
+    BreakS();
+    DisminuirTab();
+    
     Case();
     }
     else
@@ -2131,15 +2331,29 @@ function Case() {
     }
 }
 
+function BreakS(){
+    if(tokenActual.TIPO == Tipo.Reservada_Break){
+        cadena += tab+tokenActual.Valor;
+        cadena += "\r\n";   
+    emparejar(Tipo.Reservada_Break);
+    emparejar(Tipo.Punto_Coma);
+}else{
+
+}
+}
+
 function Default()
 {
     if (tokenActual.TIPO == Tipo.Reservada_Default)
     {
+        cadena += tab+tokenActual.Valor+":";
+        cadena += "\r\n";   
         emparejar(Tipo.Reservada_Default);
         emparejar(Tipo.Dos_Puntos);
+        AumentarTab();
         bodyP();
-        emparejar(Tipo.Reservada_Break);
-        emparejar(Tipo.Punto_Coma);
+        DisminuirTab();
+        BreakS();
     }
     else {
     }
@@ -2147,10 +2361,12 @@ function Default()
 }
 
 function Continue(){
-    if (tokenActual.TIPO == Tipo.Continue)
+    if (tokenActual.TIPO == Tipo.Reservada_Continue)
     {
-        emparejar(Tipo.Continue);
+        cadena += tab+tokenActual.Valor;
+        emparejar(Tipo.Reservada_Continue);
         emparejar(Tipo.Punto_Coma);
+        cadena += "\r\n";
     }
     else {
 
@@ -2162,7 +2378,7 @@ function Break(){
     {
         cadena += tab + tokenActual.Valor;
         emparejar(Tipo.Reservada_Break);
-        cadena += tokenActual.Valor;
+        
         emparejar(Tipo.Punto_Coma);
         cadena += "\r\n";
     }
@@ -2174,6 +2390,8 @@ function Break(){
 function ReturnM(){
     if (tokenActual.TIPO == Tipo.Reservada_Return)
     {
+        cadena += tab+"return;";
+        cadena += "\r\n";
         emparejar(Tipo.Reservada_Return);
         emparejar(Tipo.Punto_Coma);
     }
@@ -2191,7 +2409,7 @@ function Metodo(){
     cadena += "def " + tokenActual.Valor+"(";
     emparejar(Tipo.Identificador);
     emparejar(Tipo.Signo_Parentesis_izq);
-    Parametros();
+    Parametross();
     cadena += tokenActual.Valor+":";
     cadena += "\r\n";
     emparejar(Tipo.Signo_Parentesis_der);
@@ -2205,9 +2423,14 @@ function Metodo(){
 
 }
 
-function Parametros(){
+function Parametross(){
+    if (tokenActual.TIPO == Tipo.Reservada_Int || tokenActual.TIPO == Tipo.Reservada_Double || tokenActual.TIPO == Tipo.Reservada_String || tokenActual.TIPO == Tipo.Reservada_Bool || tokenActual.TIPO == Tipo.Reservada_Char)
+    {
    TipoDato();
    iden();
+    }else{
+
+    }
 }
 
 function iden(){
@@ -2216,6 +2439,7 @@ function iden(){
         cadena += tokenActual.Valor;
         emparejar(Tipo.Identificador);
         idenP();
+        
     }
     else {
 
@@ -2231,7 +2455,6 @@ function idenP(){
             TipoDato();
             cadena += tokenActual.Valor;
             emparejar(Tipo.Identificador);
-            Expres();
             idenP();
         }
       else
@@ -2244,8 +2467,11 @@ function idenP(){
 function ReturnF(){
     if (tokenActual.TIPO == Tipo.Reservada_Return)
     {
+        cadena += tab+"return ";
         emparejar(Tipo.Reservada_Return);
         Expres();
+        cadena += tokenActual.Valor;
+        cadena += "\r\n";
         emparejar(Tipo.Punto_Coma);
     }
     else {
@@ -2255,12 +2481,13 @@ function ReturnF(){
 
 function Funcion(){
      funReturnF = true;
-     cadena += "def " + tokenActual.Valor+"(";
+     cadena += tokenActual.Valor;
      emparejar(Tipo.Signo_Parentesis_izq);
-     Parametros();
-     cadena += tokenActual.Valor+":";
-     cadena += "\r\n";
+     Parametross();
      emparejar(Tipo.Signo_Parentesis_der);
+     cadena += "):";
+     cadena += "\r\n";
+     //emparejar(Tipo.Signo_Parentesis_der);
      emparejar(Tipo.Signo_Corchete_izq);
      AumentarTab();
      bodyP();
@@ -2403,6 +2630,27 @@ function TP()
         F();
         TP();
     }
+    else if (tokenActual.TIPO == Tipo.Comparador_Or)
+    {
+        cadena += tokenActual.Valor;
+        emparejar(Tipo.Comparador_Or);
+        F();
+        TP();
+    }
+    else if (tokenActual.TIPO == Tipo.Comparador_And)
+    {
+        cadena += tokenActual.Valor;
+        emparejar(Tipo.Comparador_And);
+        F();
+        TP();
+    }
+    else if (tokenActual.TIPO == Tipo.Operador_IgualIgual)
+    {
+        cadena += tokenActual.Valor;
+        emparejar(Tipo.Operador_IgualIgual);
+        F();
+        TP();
+    }
   
     else if (tokenActual.TIPO == Tipo.Operador_Division)
     {
@@ -2411,9 +2659,58 @@ function TP()
         F();
         TP();
     }
+    if(tokenActual.TIPO == Tipo.Operador_IgualIgual)
+    {
+        cadena += tokenActual.Valor;
+        emparejar(Tipo.Operador_IgualIgual);
+        F();
+        TP();
+    }
+    else if (tokenActual.TIPO == Tipo.Operador_MenorQue)
+    {
+        cadena += tokenActual.Valor;
+        emparejar(Tipo.Operador_MenorQue);
+        F();
+        TP();
+    }
+    else if (tokenActual.TIPO == Tipo.Operador_MayorQue)
+    {
+        cadena += tokenActual.Valor;
+        emparejar(Tipo.Operador_MayorQue);
+        F();
+        TP();
+    }
+    else if (tokenActual.TIPO == Tipo.Operador_MayorIgual)
+    {
+        cadena += tokenActual.Valor;
+        emparejar(Tipo.Operador_MayorIgual);
+        F();
+        TP();
+    }
+    else if (tokenActual.TIPO == Tipo.Operador_MenorIgual)
+    {
+        cadena += tokenActual.Valor;
+        emparejar(Tipo.Operador_MenorIgual);
+        F();
+        TP();
+    }
+    else if (tokenActual.TIPO == Tipo.Operador_Diferencia)
+    {
+        cadena += tokenActual.Valor;
+        emparejar(Tipo.Operador_Diferencia);
+        F();
+        TP();
+    }
+    else if (tokenActual.TIPO == Tipo.Signo_Not)
+    {
+        cadena += tokenActual.Valor;
+        emparejar(Tipo.Signo_Not);
+        F();
+        TP();
+    }
     else
     {
-
+       errorExp = true;
     }
 
 }
@@ -2430,7 +2727,7 @@ function F()
     {
         cadena += tokenActual.Valor;
         emparejar(Tipo.Signo_Parentesis_izq);
-        E();
+        Expres();
         cadena += tokenActual.Valor;
         emparejar(Tipo.Signo_Parentesis_der);
     }
@@ -2438,7 +2735,7 @@ function F()
     {
         cadena += tokenActual.Valor;
         emparejar(Tipo.Signo_Llave_izq);
-        E();
+        Expres();
         cadena += tokenActual.Valor;
         emparejar(Tipo.Signo_Llave_der);
     }
@@ -2450,7 +2747,8 @@ function F()
     }
     else if (tokenActual.TIPO == Tipo.Cadena_Texo)
     {
-        cadena += tokenActual.Valor;
+        cadena += "\""+tokenActual.Valor+ "\"";
+        
         emparejar(Tipo.Cadena_Texo);
     }
     else if (tokenActual.TIPO == Tipo.Reservada_Float)
@@ -2460,9 +2758,7 @@ function F()
     }
    else if (tokenActual.TIPO == Tipo.Cadena_char)
     {
-        if(existeHtml = true){
-            Codigos.push(new Html(tokenActual.Valor));
-        }
+       
         cadena += tokenActual.Valor;
         emparejar(Tipo.Cadena_char);
     }
@@ -2507,8 +2803,9 @@ function F()
                console.log("Error se esperaba " + Tipo.properties[tip].name);             
                var tokenSiguiente = Token;
                tokenSiguiente = Salida[controlToken - 1];
-               Errores.push(new Error(tokenSiguiente.Numero,"Error sintactico",tokenSiguiente.Fila, tokenSiguiente.Columna, "Error se esperaba " +" "+ Tipo.properties[tip].name +" "+ Tipo.properties[tip].code));              
+               Errores.push(new Error(sumador,"Error sintactico",tokenSiguiente.Fila, tokenSiguiente.Columna, "Error se esperaba " +" "+ Tipo.properties[tip].name +" "+ Tipo.properties[tip].code));              
                errorSintactico = true;
+               sumador++;
            }
 
            if (tokenActual.TIPO != Tipo.ULTIMO && errorSintactico == true)
@@ -2613,6 +2910,13 @@ function saveDocument(value_Txt, aux_Nombre) {
 
   function parsearHtml()
   {
+    tokenActualH=TokenH;
+    controlTokenH;
+    errorSintacticoH = false;  
+    tabH = "";
+  
+    tabH = "";
+    tabJ = "";
       SalidaH.push(new TokenH(TipoH.ULTIMO,"ULTIMO"));
    
       controlTokenH = 0;
@@ -2620,6 +2924,7 @@ function saveDocument(value_Txt, aux_Nombre) {
       console.log(tokenActualH.Valor);
       //Llamada al no terminal inicial
       bodyH();
+
   }
 
   function bodyH()
@@ -2685,15 +2990,19 @@ function saveDocument(value_Txt, aux_Nombre) {
                myJson += "\r\n";
                bodyH();
            }
-           else if (tokenActualH.TIPOH == TipoH.Etiqueta_Body)
+           else if (tokenActualH.TIPOH == TipoH.Etiqueta_Body||tokenActualH.TIPOH == TipoH.texto)
            {
-            myHtml += tokenActualH.Valor;
-            myJson += tabJ+"\""+tokenActualH.Valor+"\""+":{"; 
+            
+            myJson += tabJ+"\""+"body"+"\""+":{"; 
                myJson += "\r\n";
+               if(tokenActualH.TIPOH == TipoH.Etiqueta_Body){  
+                myHtml += tokenActualH.Valor;
             emparejarH(TipoH.Etiqueta_Body);
+               }else{
             AumentarTabJ();
             stilo();
             DisminuirTabJ();
+               }
             myHtml += tokenActualH.Valor;
             emparejarH(TipoH.SignoCierre);
             myHtml += "\r\n";
@@ -2737,15 +3046,19 @@ function saveDocument(value_Txt, aux_Nombre) {
                bodyH();
 
            }
-       else if (tokenActualH.TIPOH == TipoH.Etiqueta_Div)
+       else if (tokenActualH.TIPOH == TipoH.Etiqueta_Div || tokenActualH.TIPOH == TipoH.texto)
        {
-        myHtml += tokenActualH.Valor;
-        myJson += tabJ+"\""+tokenActualH.Valor+"\""+":{"; 
+      
+        myJson += tabJ+"\""+"div"+"\""+":{"; 
         myJson += "\r\n";
-        emparejarH(TipoH.Etiqueta_Div);
+        if(tokenActualH.TIPOH == TipoH.Etiqueta_Div){
+            myHtml += tokenActualH.Valor;       
+             emparejarH(TipoH.Etiqueta_Div);
+        }else{
         AumentarTabJ();
         stilo();
         DisminuirTabJ();
+        }
         myHtml += tokenActualH.Valor;
         emparejarH(TipoH.SignoCierre);
         myHtml += "\r\n";
@@ -2785,10 +3098,16 @@ function saveDocument(value_Txt, aux_Nombre) {
                emparejarH(TipoH.Etiqueta_P);
                myHtml += tokenActualH.Valor;
                emparejarH(TipoH.SignoCierre);
+               myHtml += "\r\n";
                AumentarTabJ();
-               TextoH();
+              
+               AumentarTabH();
+               TextoHH();
+               DisminuirTabH();
+          
                DisminuirTabJ();
-               myHtml += tokenActualH.Valor;
+               myHtml += "\r\n";
+               myHtml += tabH+tokenActualH.Valor;
                emparejarH(TipoH.Signo_Fin);
                myHtml += tokenActualH.Valor;
                emparejarH(TipoH.Etiqueta_P);
@@ -2846,7 +3165,7 @@ function saveDocument(value_Txt, aux_Nombre) {
        }
        else if (tokenActualH.TIPOH == TipoH.Etiqueta_Label)
        {
-        myHtml += tokenActualH.Valor;
+        myHtml +=  tabH+tokenActualH.Valor;
                emparejarH(TipoH.Etiqueta_Label);
                myHtml += tokenActualH.Valor;
                emparejarH(TipoH.SignoCierre);
@@ -2877,7 +3196,102 @@ function saveDocument(value_Txt, aux_Nombre) {
 
    }
 
+   function etiquetaBR(){
+    if (tokenActualH.TIPOH == TipoH.TipoH.SignoAbre)
+    {
+         myHtml += tabH+tokenActualH.Valor;
+        emparejarH(TipoH.SignoAbre);
+         myJson += tabJ+"\""+tokenActualH.Valor+"\""; 
+         myJson += "\r\n";
+        myHtml += tokenActualH.Valor;
+        emparejarH(TipoH.Etiqueta_Br);
+        myHtml += tokenActualH.Valor;
+        myHtml += "\r\n";
+        emparejarH(TipoH.SignoCierre);
+        
+
+    }else{
+
+    }
+   }
+
+   var textoM;
+   var vinoTexto=false;
    function TextoH(){
+       
+    if (tokenActualH.TIPOH == TipoH.texto)
+    {    
+        vinoTexto = true;
+        myHtml += tabH+tokenActualH.Valor+" ";
+        textoM += tokenActualH.Valor+" ";
+        //myJson += tabJ+"texto"+":"+"\""+tokenActualH.Valor+"\""; 
+        //myJson += "\r\n";
+        emparejarH(TipoH.texto);
+        TextoH();
+        
+       
+    }
+    else if (tokenActualH.TIPOH == TipoH.SignoAbre || SalidaH[controlTokenH+1].TIPO == TipoH.Etiqueta_Br)
+    {
+        myHtml += tokenActualH.Valor;
+        emparejarH(TipoH.SignoAbre);
+        
+        myJson += tabJ+"\""+tokenActualH.Valor+"\""; 
+        myJson += "\r\n";
+        myHtml += tokenActualH.Valor;
+        emparejarH(TipoH.Etiqueta_Br);
+        myHtml += tokenActualH.Valor;
+        
+        emparejarH(TipoH.SignoCierre);
+        TextoH();
+
+    }
+    else{
+
+    }
+   }
+
+
+   function TextoHH(){
+
+ if (tokenActualH.TIPOH == TipoH.texto)
+ {    
+     vinoTexto = true;
+     myHtml += tabH+tokenActualH.Valor+" ";
+     //textoM += tokenActualH.Valor+" ";
+     myJson += tabJ+"texto"+":"+"\""+tokenActualH.Valor+"\""; 
+     myJson += "\r\n";
+     //myJson += tabJ+"texto"+":"+"\""+tokenActualH.Valor+"\""; 
+     //myJson += "\r\n";
+     emparejarH(TipoH.texto);
+     TextoHH();
+     
+    
+ }
+ else if (tokenActualH.TIPOH == TipoH.SignoAbre || SalidaH[controlTokenH+1].TIPO == TipoH.Etiqueta_Br)
+ {
+     myHtml += tokenActualH.Valor;
+     emparejarH(TipoH.SignoAbre);
+     
+     myJson += tabJ+"\""+tokenActualH.Valor+"\""; 
+     myJson += "\r\n";
+     myHtml += tokenActualH.Valor;
+     emparejarH(TipoH.Etiqueta_Br);
+     myHtml += tokenActualH.Valor;
+     
+     emparejarH(TipoH.SignoCierre);
+     myHtml += "\r\n";
+     TextoHH();
+
+ }
+ else{
+
+ }
+}
+
+
+
+function TextoH(){
     if (tokenActualH.TIPOH == TipoH.texto)
     {    
         myHtml += tokenActualH.Valor;
@@ -2893,17 +3307,35 @@ function saveDocument(value_Txt, aux_Nombre) {
    }
 
    function stilo(){
-    if (tokenActualH.TIPOH == TipoH.Style)
-    {    
+    if (tokenActualH.TIPOH == TipoH.texto)
+    {   
+
+        var stilot;
+        stilot = tokenActualH.Valor;
+        stilot.split("\"");
+        var jsonText="";
+        myHtml += tokenActualH.Valor;
+        emparejarH(TipoH.Texto);
+        console.log("cadenotaaaaaaa");
+        for (var i=0; i < stilot.length; i++) {
+            if(stilot[i]=="\""){
+                 for ( var b = i+1; b<stilot.length;b++){
+                        if(stilot[b]=="\""){
+                            break;
+                        }
+                        else{
+
+                             jsonText += stilot[b];
+                        }
+                 }
+                 break;
+            }
+            console.log(stilot[i] + " / ");
+         }
         
-        myHtml += " "+tokenActualH.Valor;
-        emparejarH(TipoH.Style);
-        myHtml += tokenActualH.Valor;
-        emparejarH(TipoH.Igual);
-        myHtml += tokenActualH.Valor;
-        myJson += tabJ+"style"+":"+"\""+tokenActualH.Valor+"\","
+        myJson += tabJ+"style"+":"+"\""+jsonText+"\","
         myJson += "\r\n";
-        emparejarH(TipoH.Definicion);
+        
        
     }else{
 
