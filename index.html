@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+    <head>
+     
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="bootstrap.min.css">
+        <script type="text/javascript" src="traductor.js"></script> 
+        <script type="text/javascript" src="Scanner.js"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <title>Traductor</title>
+     
+     
+    </head>
+    <style>
+      body {
+       
+      }
+        textarea {
+    overflow-y: scroll;
+    height: 20px;
+    resize: none;
+    width: 100px;
+     /* Remove this if you want the user to resize the textarea */
+
+     
+     }
+
+     .custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.archi{
+  display: none;
+}
+ 
+input[type="file"] {
+    display: none;
+}
+    </style>
+
+<script>
+
+  function processFiles(files) {
+  var file = files[0];
+  
+  var reader = new FileReader();
+  
+  reader.onload = function (e) {
+  // Cuando éste evento se dispara, los datos están ya disponibles.
+  // Se trata de copiarlos a una área <div> en la página.
+    
+  var output = document.getElementById("fileOutput");
+  output.textContent = e.target.result;
+  document.getElementById("entrada").value = output.textContent;
+  };
+  reader.readAsText(file);
+  }
+  
+  </script>
+    <body>
+
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Traductor</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarColor02">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <button type="button" onclick="prueba()" class="btn btn-success">Traducir</button>
+            </li>
+           
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                 Archivo
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+               <div class = "dropdown-item">
+                <label class="custom-file-upload">
+                  <input id="fileInput" type="file" class="nuestroinput" size="50" onchange="processFiles(this.files)">
+                  Arbrir
+              </label>
+            </div>
+                <a class="dropdown-item" onclick="obtenerC()" >Guardar CodigoC#</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Reportes
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" onclick="obtenerPY()" >CodigoPY</a>
+                <a class="dropdown-item" onclick="obtenerHT()" >CodigoHTML</a>
+                <a class="dropdown-item" onclick="obtenerJS()" >CodigoJSON</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+          </ul>
+       
+        </div>
+      </nav>
+
+      
+    
+  
+           
+
+      <div class="row">
+      <div class="col">
+            <div class="col-sm-10">
+                    <div class="form-group">
+               <label for="exampleTextarea">Codigo C#</label>
+               <textarea class="form-control" id="entrada" rows="13"></textarea>
+             </div>
+          </div>
+        </div>
+
+
+          <div class="col">
+          <div class="col-sm-10">
+                <div class="form-group">
+           <label for="exampleTextarea">Codigo Pyhton</label>
+           <textarea readonly class="form-control" id="traduccionP" rows="10"></textarea>
+         </div>
+          </div>
+          </div>
+
+
+
+</div>
+
+
+<div class="row">
+        <div class="col">
+    <div class="col-sm-5">
+      <div id="mensaje">
+        
+      </div>      
+      <div id="botonError">
+        
+      </div>  
+     
+      
+    <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Linea</th>
+
+              </tr>
+            </thead>
+            <tbody id="tablaVar">
+
+         
+              <tr class="table-primary">
+                <th scope="row">a</th>
+                <td>int</td>
+                <td>1</td>
+
+              </tr>
+             
+            </tbody>
+          </table> 
+         
+        </div>
+    </div>   
+ 
+    <div class="col">
+
+
+      
+            <div class="col-sm-10">
+              <ul class="nav nav-tabs">
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#home">Html</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#profile">Json</a>
+                </li>
+              
+              
+              </ul>
+              <div id="myTabContent" class="tab-content">
+                <div class="tab-pane fade active show" id="home">
+                  <div class="form-group">
+                    <label for="exampleTextarea">Codigo HTML</label>
+                    <textarea readonly class="form-control" id="traduccionH" rows="10"></textarea>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="profile">
+                  <div class="form-group">
+                    <label for="exampleTextarea">Codigo Json</label>
+                    <textarea readonly class="form-control" id="traduccionJ" rows="10"></textarea>
+                
+                  </div>
+                </div>
+              
+             
+              </div>
+             </div>
+    </div>
+</div>
+    </div>
+
+
+  
+ 
+    <div id="fileOutput" class="archi"></div>
+       
+         
+    </body>
+</html>
